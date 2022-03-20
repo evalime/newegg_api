@@ -10,7 +10,10 @@ class Inventory:
         pass
 
     def openSbtInv(self):
-        self.inv = pd.read_excel(self.sbt_loc, engine='xlrd')
+        self.cols = ['item','onhand','aloc']
+        self.inv = pd.read_excel(self.sbt_loc, usecols = self.cols, engine='xlrd')
+        self.inv['total'] = self.inv['onhand'] - self.inv['aloc']
+        self.inv.drop(['onhand','aloc'],axis=1,inplace=True)
         return self.inv
 
     def check_inv(self):
