@@ -21,11 +21,19 @@ class ServerAccess:
         self.headers["Accept"] = "application/json"
         self.headers["Content-Type"] = "application/json"
         return self.headers
+ 
+    def updateInventory(self,invReports):
+        self.status = []
+        self.error_msg = []
+        for invReport in invReports['inventory']:
+            self.data =json.dumps(invReport)
+            reqInv = requests.post(self.invUrl, headers=self.header(), data = self.data)
+            if reqInv.status_code == 400:
+                self.error_msg.append( f"{invReport['Value']} {reqInv.json()[0]['Message']}")
+            else:                
+                self.status.append(reqInv.status_code)
+        return self.status, self.error_msg
 
-    def updateInventory(self,invReport):
-        self.jsoninvReport = json.dumps(invReport)
-        reqInv = requests.post(self.invUrl, headers=self.header(), data = self.jsoninvReport)
-        return reqInv
 
     def requestReport(self, inventoryReportType):
         self.jsonInventoryReportType = json.dumps(inventoryReportType)
